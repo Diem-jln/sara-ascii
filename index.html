@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarà Perché Ti Amo — para Nella</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <canvas id="ascii-canvas"></canvas>
+
+    <!-- Capa dinámica para las 4 frases puntuales -->
+    <div id="lyric-layer" aria-live="polite">
+      <div id="lyric-text"></div>
+    </div>
+
+    <!-- Cierre romántico (se activa al terminar la canción o con [F]) -->
+    <div id="finale-layer" class="hidden">
+      <div id="pixi-bouquet"></div>
+      <div id="finale-quote">
+        <p class="quote-main">Sarà perché ti amo</p>
+        <div class="quote-ornament">· · ── ✦ ♡ ✦ ── · ·</div>
+      </div>
+    </div>
+
+    <!-- Pantalla inicial (solo al comienzo) -->
+    <div id="ui-overlay">
+      <div class="aurora aurora-1"></div>
+      <div class="aurora aurora-2"></div>
+
+      <div class="card">
+        <span class="corner tl">╭── ✦</span>
+        <span class="corner tr">✦ ──╮</span>
+        <span class="corner bl">╰── ♡</span>
+        <span class="corner br">♡ ──╯</span>
+
+        <div class="ascii-emblem" aria-hidden="true">
+          .·:*¨༺ ♡ ༻¨*:·.
+        </div>
+
+        <p class="dedication">para Nella</p>
+        <div class="divider"></div>
+
+        <h1>SARÀ PERCHÉ TI AMO</h1>
+        <p class="subtitle">Arte ASCII vivo · Cada reproducción dibuja una historia única</p>
+
+        <div class="actions">
+          <button id="btn-default" class="btn-primary">
+            <span class="play-icon">▶</span> Comenzar
+          </button>
+          <label class="btn-secondary">
+            Cargar otro audio / video
+            <input type="file" id="audio-input" accept="audio/*,video/mp4,.mp4" hidden />
+          </label>
+        </div>
+
+        <p class="interaction-hint">
+          Mueve el cursor · Haz clic para crear ondas · [Espacio] mutar patrón
+        </p>
+        <p id="status-msg"></p>
+      </div>
+    </div>
+
+    <!-- HUD flotante limpio -->
+    <div id="hud" class="hidden">
+      <button id="btn-toggle" class="hud-btn" title="Pausar / Reanudar">❚❚</button>
+
+      <div class="progress-wrap" id="progress-wrap" title="Saltar en la canción">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <span id="hud-seed" class="hud-seed">#0000</span>
+      <span class="hint">[H]</span>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
