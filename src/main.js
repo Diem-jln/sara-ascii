@@ -136,7 +136,7 @@ audioInput.addEventListener('change', async (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
   try {
-    await audioEngine.loadFile(file);
+   await audioEngine.loadUrl('./audio/sara_perche_ti_amo.mp4');
     startExperience();
   } catch (err) {
     console.error(err);
