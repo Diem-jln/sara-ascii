@@ -64,6 +64,7 @@ function updateLyrics(currentTime) {
 }
 
 function startExperience() {
+  statusMsg.textContent = '';
   overlay.classList.add('fade-out');
   hud.classList.remove('hidden');
 }
@@ -123,12 +124,12 @@ progressWrap.addEventListener('click', (e) => {
 btnDefault.addEventListener('click', async () => {
   try {
     statusMsg.textContent = 'Cargando pista...';
-    await audioEngine.loadUrl('/audio/sara_perche_ti_amo.mp4');
+    const defaultTrack = `${import.meta.env.BASE_URL}audio/sara_perche_ti_amo.mp4`;
+    await audioEngine.loadUrl(defaultTrack);
     startExperience();
   } catch (err) {
     console.error(err);
-    statusMsg.textContent =
-      'No se encontró /public/audio/sara_perche_ti_amo.mp4. Usa "Cargar otro audio / video".';
+    statusMsg.textContent = `Error al cargar la pista local: ${err.message}`;
   }
 });
 
@@ -136,11 +137,14 @@ audioInput.addEventListener('change', async (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
   try {
-   await audioEngine.loadUrl('./audio/sara_perche_ti_amo.mp4');
+    statusMsg.textContent = `Cargando ${file.name}...`;
+    await audioEngine.loadFile(file);
     startExperience();
   } catch (err) {
     console.error(err);
-    statusMsg.textContent = 'Error al reproducir el archivo seleccionado.';
+    statusMsg.textContent = `Error al reproducir ${file.name}: ${err.message}`;
+  } finally {
+    audioInput.value = '';
   }
 });
 

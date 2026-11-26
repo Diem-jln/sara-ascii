@@ -3,18 +3,18 @@ export class AudioEngine {
     this.ctx = null;
     this.analyser = null;
     this.media = document.createElement('video');
-    this.media.crossOrigin = 'anonymous';
     this.media.playsInline = true;
     this.media.preload = 'auto';
     this.source = null;
     this.data = null;
 
+    this.currentObjectUrl = null;
     this.energyHistory = [];
     this.lastBeatTime = 0;
     this.isPlaying = false;
   }
 
-  initContext() {
+  async initContext() {
     if (!this.ctx) {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
       this.analyser = this.ctx.createAnalyser();
@@ -27,21 +27,60 @@ export class AudioEngine {
       this.analyser.connect(this.ctx.destination);
     }
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      await this.ctx.resume();
     }
   }
 
-  async loadUrl(url) {
-    this.initContext();
-    this.media.src = url;
+  resetMedia() {
+    this.media.pause();
+    this.isPlaying = false;
+    this.media.removeAttribute('src');
     this.media.load();
+
+    if (this.currentObjectUrl) {
+      URL.revokeObjectURL(this.currentObjectUrl);
+      this.currentObjectUrl = null;
+    }
+  }
+
+  async loadUrl(url, isBlob = false) {
+    await this.initContext();
+    this.resetMedia();
+
+    if (isBlob) {
+      this.currentObjectUrl = url;
+    }
+
+    this.media.src = url;
+    this.media.currentTime = 0;
+
+    // Espera a que el navegador confirme que la nueva pista cargó antes de reproducir
+    await new Promise((resolve, reject) => {
+      const onReady = () => {
+        cleanup();
+        resolve();
+      };
+      const onError = () => {
+        cleanup();
+        reject(new Error(`No se pudo cargar el archivo (${url})`));
+      };
+      const cleanup = () => {
+        this.media.removeEventListener('canplay', onReady);
+        this.media.removeEventListener('error', onError);
+      };
+
+      this.media.addEventListener('canplay', onReady, { once: true });
+      this.media.addEventListener('error', onError, { once: true });
+      this.media.load();
+    });
+
     await this.media.play();
     this.isPlaying = true;
   }
 
   async loadFile(file) {
     const objectUrl = URL.createObjectURL(file);
-    await this.loadUrl(objectUrl);
+    await this.loadUrl(objectUrl, true);
   }
 
   togglePlay() {
